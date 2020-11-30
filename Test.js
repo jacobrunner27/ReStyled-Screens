@@ -71,6 +71,15 @@ export default class LoginView extends Component {
 
           <View style={styles.userInputs}>
 
+              <View style={styles.textPosition}> 
+                <Text style={styles.textBold}> 
+                  Item Name
+                </Text>
+                <Text style={styles.textNormal}>
+                  What would you like to buy?
+                </Text>
+              </View>
+
               <View style={styles.itemNameInput}>
                 <TextInput
                     style={styles.inputText}
@@ -84,6 +93,15 @@ export default class LoginView extends Component {
                 <HorizontalLine />
              </View>
 
+             <View style={styles.textPosition}> 
+                <Text style={styles.textBold}> 
+                  Description
+                </Text>
+                <Text style={styles.textNormal}>
+                  Describe the item you want to buy.
+                </Text>
+              </View>
+
               <View style={styles.itemDescription}>
                 <TextInput
                     style={styles.inputText}
@@ -94,6 +112,15 @@ export default class LoginView extends Component {
               </View>
            
              <HorizontalLine />
+
+             <View style={styles.textPosition}> 
+                <Text style={styles.textBold}> 
+                  Price
+                </Text>
+                <Text style={styles.textNormal}>
+                  What is your desired price range?
+                </Text>
+              </View>
 
               <View style={styles.minimumMaximumPosition}>
                 <View style={styles.minimumInput}>
@@ -144,6 +171,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.whisper
     
   },
+  textPosition: {
+    
+  },
+  textNormal: {
+    color: '#5A228B',
+    fontSize: 18
+  },
+  textBold: {
+    color: '#5A228B',
+    fontSize: 26,
+    fontWeight: 'bold'
+  },
   header: {
     flex: 1,
     width: Dimensions.get('window').width,
@@ -168,7 +207,7 @@ const styles = StyleSheet.create({
   horizontalLine: {
     width: Dimensions.get('window').width,
     backgroundColor: 'white',
-    height: 4,
+    height: 2,
   },
   inputContainer: {
       borderBottomColor: '#F5FCFF',
@@ -288,7 +327,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-around',
     alignItems: 'center',
-    marginVertical: 100
+    marginVertical: 110,
+
 
   },
   treviIcon: {
@@ -303,5 +343,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
 });
+
+                                            
 
                                             
