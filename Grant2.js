@@ -155,10 +155,10 @@ const Grant2 = ({navigation, route}) => {
         return (
             <View style={styles.mainContainer} onLayout={() => getToken()}>
                 <View style={styles.headerMainContainer}>
-                     <ImageBackground source={require('./src/Assets/Images/grantHeader.jpg')} style={styles.backgroundImage}>
+                     <ImageBackground source={require('../../../Assets/Images/grantHeader.jpg')} style={styles.backgroundImage}>
 
                         <TouchableOpacity style={styles.treviIcon} onPress={() => navigation.navigate('Trending', {})}>
-                        <Image source={require('./src/Assets/Images/littleTreviLogo.png')} />
+                        <Image source={require('../../../Assets/Images/littleTreviLogo.png')} />
                         </TouchableOpacity>
 
                         <Text style={styles.grantText}>
@@ -220,6 +220,14 @@ const Grant2 = ({navigation, route}) => {
                                         setItemCondition(conditions[value].label)
                                     }
                                 }/>
+
+                        <View style={styles.conditionTextPosition}> 
+                            <Text style={styles.poorText}>Poor</Text>
+                            <Text style={styles.fairText}>Fair</Text>
+                            <Text style={styles.goodText}>Good</Text>
+                            <Text style={styles.greatText}>Great</Text>
+                            <Text style={styles.newText}>New</Text>
+                        </View>
                         <View style={[styles.lineHorizontal]}></View>
                         </View>
                         <View style={[styles.rowCompContainer, { marginTop: 0 }]}>
@@ -265,6 +273,39 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         backgroundColor: Colors.whisper
+    },
+    conditionTextPosition: {
+        flexDirection: 'row',
+    },
+    poorText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.blue,
+        paddingHorizontal: 16
+    },
+    fairText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.blue,
+        paddingHorizontal: 16
+    },
+    goodText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.blue,
+        paddingHorizontal: 16
+    },
+    greatText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.blue,
+        paddingHorizontal: 16
+    },
+    newText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: Colors.blue,
+        paddingHorizontal: 16
     },
     compContainer: {
         marginHorizontal: width(5),
