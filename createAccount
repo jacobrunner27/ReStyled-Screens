@@ -1,0 +1,364 @@
+import React, { Component, useState } from 'react';
+import { width, height, totalSize, } from 'react-native-dimension';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  TouchableHighlight,
+  Image,
+  Alert,
+  ImageBackground,
+  ScrollView,
+  Dimensions,
+  TouchableOpacity
+} from 'react-native';
+
+import IonIcon from 'react-native-vector-icons/Ionicons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const BottomBar = ({ children }) => (
+    <View style={styles.bottomBar}>
+        {children}
+    </View>
+)
+
+const Header = ({ children }) => (
+    <View style={styles.header}>
+        {children}
+    </View>
+)
+
+const HorizontalLine = ({ children }) => (
+    <View style={styles.horizontalLine}>
+    </View>
+)
+
+const Colors = {
+    primary: '#651a93',
+    secondary: '#4E45D6',
+    orange: '#f9c400',
+    whisper: '#f0edf4',
+    white: '#ffffff',
+    steel: '#cccccc',
+    black: '#000000',
+    gray: 'gray',
+    gray1: '#acb4be',
+    transparent: 'transparent'
+}
+
+const CreateAccountScreen = ({navigation}) => {
+
+    const [username, setUsername] = useState(null);
+    const [password, setPassword] = useState(null);
+    const [email, setEmail] = useState(null);
+    const [firstName, setFirstName] = useState(null);
+    const [lastName, setLastName] = useState(null);
+    const [bio, setBio] = useState(null);
+    const [message, setMessage] = useState('');
+
+    const createUser = async () => {
+        await fetch('http://trevi-server.us-west-2.elasticbeanstalk.com/create-user/', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+                email: email,
+                first_name: firstName,
+                last_name: lastName,
+                bio: bio
+            })
+        })
+        .then((response) => response.json())
+        .then((json) => (json.response == 'valid') ? setMessage('Account created') : setMessage('Error creating account'))
+        .catch((error) => console.log(error))
+      }
+
+    return (
+
+      <View style={styles.container}>
+
+        <View style={styles.headerPosition}>
+            <Header>
+                <ImageBackground source={require('../../../Assets/Images/homeScreenHeader.png')} style={styles.headerBackground}>
+                    <View style={styles.headerElementsPositions}>
+                        <TouchableOpacity style={ styles.headerIconLeft} onPress={() => navigation.navigate('Splash')}>
+                            <IonIcon name={'chevron-back-outline'} size={35} color={'white'}  />
+                        </TouchableOpacity>
+                        <Text style={styles.headerText}>Welcome!</Text>
+                    </View>
+                </ImageBackground>
+            </Header>
+        </View>
+
+        
+
+
+
+        <View style={styles.userInputs}>
+           
+            <Text style={styles.backgroundText} >First Name</Text>
+         
+            <View style={styles.firstNameInput} >
+            <TextInput
+                style={styles.inputText}
+                placeholder="First name"
+                placeholderTextColor="#D3D3D3"
+                onChangeText={text => setFirstName(text)}/>
+            </View>
+
+            <Text style={styles.backgroundText}>Last Name</Text>
+
+            <View style={styles.lastNameInput} >
+            <TextInput
+                style={styles.inputText}
+                placeholder="Last name"
+                placeholderTextColor="#D3D3D3"
+                onChangeText={text => setLastName(text)}/>
+            </View>
+            <HorizontalLine />
+
+            <Text style={styles.backgroundText} >Email</Text>
+
+            <View style={styles.emailInput} >
+            <TextInput
+                style={styles.inputText}
+                placeholder="Email"
+                placeholderTextColor="#D3D3D3"
+                onChangeText={text => setEmail(text)}/>
+            </View>
+            <HorizontalLine />
+            <Text style={styles.backgroundText} >Username</Text>
+
+            <View style={styles.usernameInput} >
+            <TextInput
+                style={styles.inputText}
+                placeholder="Username"
+                placeholderTextColor="#D3D3D3"
+                onChangeText={text => setUsername(text)}/>
+            </View>
+
+            <Text style={styles.backgroundText} >Password</Text>
+
+            <View style={styles.passwordInput} >
+            <TextInput
+                style={styles.inputText}
+                placeholder="Password"
+                placeholderTextColor="#D3D3D3"
+                onChangeText={text => setPassword(text)}/>
+            </View>
+
+            <Text>{message}</Text>
+
+            <TouchableOpacity style={[styles.termsButtonContainer, styles.termsButton]} onPress={()=> this.props.navigation.navigate(routes.termsAndConditions)} >
+                <Text style={styles.termsText}>Terms and Conditions</Text>
+            </TouchableOpacity>
+
+        </View>
+    
+        <View style={styles.bottomBarPosition}>
+            <BottomBar>
+                <TouchableOpacity style={[styles.createButtonContainer, styles.createAccountButtonPosition]} onPress={() => createUser()}>
+                    <Text style={styles.createAccountText}>Create Account</Text>
+                </TouchableOpacity>
+            </BottomBar>
+        </View>
+
+      </View>
+
+    );
+  }
+
+ export default CreateAccountScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#EAE9F0'
+
+  },
+  header: {
+    flex: 1,
+    //chnge the width back to .window
+    width: 434,
+    justifyContent: 'center'
+  },
+  headerPosition: {
+    position: "absolute",
+    top: 0,
+  },
+  headerBackground: { 
+    height: 90,
+    shadowOffset: { width: 3, height: 6 },
+    shadowColor: Colors.black,
+    shadowOpacity: 0.25,
+    elevation: 5,
+    justifyContent: 'center',
+  },
+  headerIconLeft: {
+    position: 'relative',
+    alignItems: 'flex-start',
+    
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginHorizontal: 100
+    
+  },
+  headerElementsPositions: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginTop: 25,
+  },
+  bottomBarPosition: {
+    position: "absolute",
+    bottom: 0,
+  },
+  bottomBar: {
+    backgroundColor: 'white',
+    width: Dimensions.get('window').width,
+    height: 90,
+  },
+  inputContainer: {
+      borderBottomColor: '#F5FCFF',
+      backgroundColor: '#FFFFFF',
+      borderRadius:30,
+      borderBottomWidth: 1,
+      width:250,
+      height:45,
+      flexDirection: 'row',
+      alignItems:'center'
+  },
+  inputs:{
+      height:45,
+      marginLeft:16,
+      borderBottomColor: '#FFFFFF',
+      flex:1,
+  },
+  inputIcon:{
+    width:30,
+    height:30,
+    marginLeft:15,
+    justifyContent: 'center'
+  },
+  termsButtonContainer: {
+    height:35,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width:210,
+    borderRadius:30,
+    marginLeft: '20%'
+  },
+  termsButton: {
+    backgroundColor: "white",
+    shadowOffset: { width: 3, height: 6 },
+    shadowColor: 'black',
+    shadowOpacity: 0.25,
+    elevation: 5,
+  },
+  termsText: {
+    fontSize: 15,
+    color: '#5D41BC',
+
+  },
+  createButtonContainer: {
+    height:48,
+    width:245,
+    borderRadius:30,
+    
+    backgroundColor: '#EFC102',
+    shadowOffset: { width: 3, height: 6 },
+    shadowColor: 'black',
+    shadowOpacity: 0.25,
+    elevation: 5,
+  },
+  createAccountButtonPosition: {
+    position: 'relative',
+    marginBottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginVertical: 16,
+    marginHorizontal: 80
+    
+  },
+  createAccountText: {
+    fontSize: 25,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  inputText:{
+    height:50,
+    fontWeight: 'bold',
+    fontSize: 15,
+  },
+  userInputs: {
+    flex: 1,
+    justifyContent: 'space-around',
+    marginVertical: 110,
+    marginLeft: '10%'
+  },
+  firstNameInput:{
+    width: 375,
+    backgroundColor:"white",
+    //add shadow to the bottom
+    height: 35,
+    borderRadius: 30,
+    justifyContent:"center",
+    padding: 10
+  },
+  lastNameInput: {
+    width: 375,
+    backgroundColor:"white",
+    //add shadow to the bottom
+    height: 35,
+    borderRadius: 30,
+    justifyContent:"center",
+    padding: 10
+  },
+  emailInput: {
+    width: 375,
+    backgroundColor:"white",
+    //add shadow to the bottom
+    height: 35,
+    borderRadius: 30,
+    justifyContent:"center",
+    padding: 10
+  },
+  usernameInput: {
+    width: 375,
+    backgroundColor:"white",
+    //add shadow to the bottom
+    height: 35,
+    borderRadius: 30,
+    justifyContent:"center",
+    padding: 10
+  },
+  passwordInput: {
+    width: 375,
+    backgroundColor:"white",
+    //add shadow to the bottom
+    height: 35,
+    borderRadius: 30,
+    justifyContent:"center",
+    padding: 10
+  },
+  backgroundText: {
+      fontSize: 20,
+      color: '#5D41BC',
+      fontWeight: 'bold',
+  },
+  horizontalLine: {
+    width: Dimensions.get('window').width,
+    backgroundColor: 'white',
+    height: 2,
+  },
+});
