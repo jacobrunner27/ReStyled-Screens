@@ -1,15 +1,11 @@
-import React, { Component, useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Slider, TextInput, ScrollView, TouchableOpacity, FlatList, Image, Dimensions, ImageBackground, ActivityIndicator, AsyncStorage } from 'react-native';
+import React, { Component, useState } from 'react';
+import { View, Text, StyleSheet, Slider, TextInput, ScrollView, TouchableOpacity, Dimensions,ImageBackground,Image, AsyncStorage } from 'react-native';
 import { width, height, totalSize } from 'react-native-dimension';
 import Carousel from 'react-native-snap-carousel';
 import { Icon } from 'react-native-elements';
-import image1 from '../../../Assets/Images/image1.jpg'
-import image2 from '../../../Assets/Images/image2.jpg'
-import Swipeout from 'react-native-swipeout';
-
+import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 const Colors = {
     purple: '#651a93',
@@ -18,127 +14,294 @@ const Colors = {
     white: '#ffffff',
     steel: '#cccccc',
     black: '#000000',
-    gray: 'gray',
     blue: '#585AD6',
-    transparent: 'transparent'
 }
 
 
-const MyGrantlist = ({navigation}) => {
+const Grant2 = ({navigation, route}) => {
 
-        const [carousel, setCarousel] = useState('');
-        const [token, setToken] = useState(null);
-        const [grants, setGrants] = useState([]);
-        const [loading, setLoading] = useState(true);
+            const [carousel, setCarousel] = useState(null);
 
-        const getData = async () => {
-
-            try
-            {
-                let tokenData = null;
-
-                if (!token)
+            const [categories, setCategories] = useState([
                 {
-                    const getToken = await AsyncStorage.getItem('token');
-                    setToken(getToken);
-                    tokenData = getToken;
-                }
-                else
+                    title: 'Book',
+                    iconName: 'book-open-page-variant',
+                    iconType: 'material-community',
+                },
                 {
-                    tokenData = token;
+                    title: 'Car',
+                    iconName: 'car-side',
+                    iconType: 'material-community',
+                },
+                {
+                    title: 'Tools',
+                    iconName: 'toolbox',
+                    iconType: 'material-community',
+                },
+                {
+                    title: 'Technology',
+                    iconName: 'lightbulb-on',
+                    iconType: 'material-community',
+                },
+                {
+                    title: 'Indoor',
+                    iconName: 'home',
+                    iconType: 'material-community',
+                },
+                {
+                    title: 'All',
+                    iconName: 'check-all',
+                    iconType: 'material-community',
+                },
+                {
+                    title: 'Clothes',
+                    iconName: 'tshirt-crew',
+                    iconType: 'material-community',
+                },
+            ])
+
+            const [selectedCategory, setSelectedCategory] = useState('Book');
+            const [itemCondition, setItemCondition] = useState('');
+            const [selectedIndex, setIndex] = useState(0);
+            const [multiOptions, setMultiOptions] = useState([2, 3]);
+            const [message, setMessage] = useState('');
+
+            const [sliderOptions, setOptions] = useState(2);
+
+            const [conditions, setConditions] = useState([
+                { value: 0, label: 'Poor' },
+                { value: 1, label: 'Fair' },
+                { value: 2, label: 'Good' },
+                { value: 3, label: 'Great' },
+                { value: 4, label: 'New' },
+            ])
+
+            const [token, setToken] = useState(null);
+            const [grantId, setGrantId] = useState(null);
+
+            const postGrant = async () => {
+                try
+                {
+                    let tokenData = null;
+
+                    if (!token)
+                    {
+                        const getToken = await AsyncStorage.getItem('token');
+                        setToken(getToken);
+                        tokenData = getToken;
+                    }
+                    else
+                    {
+                        tokenData = token;
+                    }
+
+                    await fetch('', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Token ' + tokenData
+                        },
+                        body: JSON.stringify({
+                            category: selectedCategory,
+                            title: route.params.title,
+                            description: route.params.description,
+                            price: route.params.price,
+                            condition: itemCondition
+                        })
+                        }).then((response) => response.json())
+                          .then((json) => (json.response == 'invalid') ? setMessage('Error posting') : navigation.navigate('GrantUpload', {grant_id: json.response}))
+                          .catch((error) => console.log(error));
                 }
+                catch (error)
+                {
+                    console.log(error);
+                }
+            };
 
-                await fetch('http://192.168.0.8:8000/display-posted/', {
-                    method: 'POST',
-                    headers: {
-                        Accept: 'application/json',
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Token ' + tokenData
-                        }
-                      })
-                      .then((response) => response.json())
-                      .then((json) => setGrants(json))
-                      .finally(() => setLoading(false))
-            }
-            catch (error)
-            {
-                console.log(error);
-            }
-        }
+    const renderScale = () => {
+        return (
+            <>
+                {
+                    sliderOptions.map((item, key) => {
+                        return (
+                            <Text style={{ fontSize: totalSize(1.7), color: '#585AD6' }}>{item.label}</Text>
+                        )
+                    })
+                }
+            </>
+        )
+    }
 
-        useEffect(() => getData(), [true]);
+    const _renderItem = ({ item, index }) => {
 
         return (
-            <View style={styles.mainContainer}>
-
-                    <View style={styles.headerMainContainer}>
-                        <ImageBackground source={require('../../../Assets/Images/grantHeader.jpg')} style={styles.backgroundImage}>
-
-                            <TouchableOpacity style={styles.wishlistIcon}>
-                                <IonIcon name={'reader-outline'} size={35} color={Colors.white}/>
-                            </TouchableOpacity>
-
-                            <Text style={styles.myGrantlistText}>
-                                My Grantlist
-                            </Text>
-
-                            <TouchableOpacity style={styles.treviIcon} onPress={() => navigation.navigate('Trending', {})}>
-                                <Image source={require('../../../Assets/Images/littleTreviLogo.png')} />
-                            </TouchableOpacity>
-
-                         </ImageBackground>
-
-                    </View>
-
-
-                <TouchableOpacity onPress={() => navigation.navigate('Grant1', {})} style={{ position: 'absolute', bottom: -totalSize(7.5), left: -totalSize(7.5), height: totalSize(15), width: totalSize(15), backgroundColor: Colors.blue, borderRadius: 100, alignItems: 'flex-end', padding: totalSize(2.5) }}>
+            <View style={{ padding: 5 }}>
+                <View style={index == selectedIndex + 3 ? [styles.categorySlideActive, styles.shadow] :  [styles.categorySlideInactive, styles.shadow]}>
                     <Icon
-                        name="plus"
-                        type="font-awesome"
-                        color={Colors.white}
-                        size={totalSize(4)}/>
-                </TouchableOpacity>
+                        name={item.iconName}
+                        type={item.iconType}
+                        color={index === selectedIndex + 3 ? Colors.orange : Colors.steel}
+                        size={totalSize(2.5)}
+                    />
+                </View>
+            </View>
+        );
+    }
+        return (
+            <View style={styles.mainContainer}>
+                <View style={styles.headerMainContainer}>
+                     <ImageBackground source={require('./src/Assets/Images/grantHeader.jpg')} style={styles.backgroundImage}>
 
+                        <TouchableOpacity style={styles.treviIcon} onPress={() => navigation.navigate('Trending', {})}>
+                        <Image source={require('./src/Assets/Images/littleTreviLogo.png')} />
+                        </TouchableOpacity>
 
+                        <Text style={styles.grantText}>
+                            Grant
+                        </Text>
 
-                {loading ? <ActivityIndicator/> : (
-                        <FlatList
-                            data={grants}
-                            keyExtractor={({item_id}, index) => item_id.toString()}
-                            renderItem={({item, index}) => (
+                        <TouchableOpacity style={styles.backIcon} onPress={() => navigation.navigate('Grant3', {})}>
+                        <IonIcon name={'chevron-back-outline'} size={35} color={'white'}  />
+                        </TouchableOpacity>
 
-                                <Swipeout
-                                    backgroundColor={Colors.whisper}
-                                    style={[{ marginRight: width(5), borderRadius: 25, marginLeft: 0, marginTop: index === 0 ? height(2) : 0, marginBottom: index === grants.length - 1 ? height(10) : height(2) }]}>
-                                    <View style={[{ backgroundColor: Colors.white, borderRadius: 25, marginLeft: width(5) }]}>
-                                        <View style={{ flexDirection: 'row', margin: 5 }}>
-                                            <View style={{ flex: 3 }}>
-                                                <Image
-                                                    source={require('../../../Assets/Images/littleTreviLogo.png')}
-                                                    style={{ height: index === 2 || index === 5 ? 150 : 100, width: null, borderRadius: 25 }}/>
-                                            </View>
-                                            <View style={{ flex: 7, padding: 10, backgroundColor: 'transparent', justifyContent: 'space-between' }}>
-                                                <Text style={styles.productTitle}>{item.title}</Text>
-                                                <Text style={styles.productTitle}>{item.description}</Text>
-                                                <Text style={styles.productPrice}>{item.price}</Text>
-                                                <Text style={styles.productTitle}>{item.condition}</Text>
-                                                <Text style={styles.productTitle}>{item.category}</Text>
-                                            </View>
-                                        </View>
-                                    </View>
-                                </Swipeout>
-                                )}/>
-                            )}
+                     </ImageBackground>
+
+                </View>
+                <ScrollView showsVerticalScrollIndicator={false}>
+                    <View>
+                        <View style={styles.compContainer}>
+                            <Text style={styles.title}>Category</Text>
+                            <Text style={styles.detail}>Which category best describes the item?</Text>
+                        </View>
+                        <View style={{ justifyContent: 'center', backgroundColor: 'transparent' }}>
+                            <View style={[styles.lineHorizontal, { position: 'absolute', right: 0, left: 0, borderBottomColor: Colors.orange, borderBottomWidth: 2 }]}></View>
+                            <Carousel
+                                ref={(c) => setCarousel(c)}
+                                data={categories}
+                                layout={'default'}
+                                enableSnap={true}
+                                loop={true}
+                                renderItem={_renderItem}
+                                sliderWidth={width(100)}
+                                sliderHeight={height(20)}
+                                itemWidth={width(15)}
+                                itemHeight={height(15)}
+                                inactiveSlideOpacity={1}
+                                inactiveSlideScale={0.8}
+                                onSnapToItem={(index) => {
+                                    setIndex(index);
+                                    setSelectedCategory(categories[index].title);
+                                    }
+                                }
+                            />
+                        </View>
+                        <Text style={[styles.SelectedItem, styles.textCenter, { marginTop: height(1) }]}>{categories[selectedIndex].title}</Text>
                     </View>
-            );
-    };
 
-export default MyGrantlist;
+                    <View style={[styles.lineHorizontal]}></View>
+
+                    <View>
+                        <View style={styles.compContainer}>
+                            <Text style={styles.title}>Condition</Text>
+                            <Text style={styles.detail}>Tap the scale to specify the condition you want the item in.</Text>
+                        </View>
+                        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+                            <Slider
+                                style={{width: 300, height: 40}}
+                                maximumValue={4}
+                                step={1}
+                                onSlidingComplete={(value) => {
+                                        setOptions(value);
+                                        setItemCondition(conditions[value].label)
+                                    }
+                                }/>
+                        <View style={styles.sliderTextPositon}>
+                            <Text style={styles.poorText}>Poor</Text>
+                            <Text style={styles.fairText}>Fair</Text>
+                            <Text style={styles.goodText}>Good</Text>
+                            <Text style={styles.greatText}>Great</Text>
+                            <Text style={styles.newText}>New</Text>
+                        </View>
+
+                        <View style={[styles.lineHorizontal]}></View>
+                        </View>
+                        <View style={[styles.rowCompContainer, { marginTop: 0 }]}>
+                        </View>
+                    </View>
+
+                    <View style={[styles.lineHorizontal]}></View>
+
+                    <View style={styles.pictureTextPosition}>
+                        <Text style={styles.pictureTextBold}>Pictures</Text>
+                        <Text style={styles.pictureText}>Provide pictures of what you want to sell</Text>
+                    </View>
+
+                    <View style={styles.photoButtonPosition}>
+                        <TouchableOpacity style={[styles.takePhotoButtonContainer, styles.takePhotoButton]} onPress={()=> this.props.navigation.navigate(routes.loginScreen)}>
+                            <Text style={styles.takePhotoText}>Take Photo</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.selectPhotoButtonContainer, styles.selectPhotoButton]} onPress={()=> this.props.navigation.navigate(routes.loginScreen)}>
+                            <Text style={styles.selectPhotoText}>Select Photo</Text>
+                        </TouchableOpacity>
+                    </View>
+
+
+                </ScrollView>
+
+                <View>
+                    <Text>{message}</Text>
+                </View>
+                <View style={[styles.bottomBox, styles.bottomBoxPosition]}>
+                        <TouchableOpacity style={styles.submitButton} onPress={() => postGrant()}>
+                            <Text style={[styles.buttonText]}>Submit</Text>
+                        </TouchableOpacity>
+                    </View>
+
+            </View>
+        );
+    }
+
+export default Grant2;
 
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         backgroundColor: Colors.whisper
+    },
+    sliderTextPositon: {
+      flexDirection: 'row',
+    },
+    poorText: {
+      paddingHorizontal: 18,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.blue
+    },
+    fairText: {
+      paddingHorizontal: 18,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.blue
+    },
+    goodText: {
+      paddingHorizontal: 18,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.blue
+    },
+    greatText: {
+      paddingHorizontal: 18,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.blue
+    },
+    newText: {
+      paddingHorizontal: 18,
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: Colors.blue
     },
     compContainer: {
         marginHorizontal: width(5),
@@ -174,27 +337,17 @@ const styles = StyleSheet.create({
     title: {
         fontSize: totalSize(2),
         fontWeight: 'bold',
-        color: Colors.blue,
+        color: Colors.blue
     },
     detail: {
         fontSize: totalSize(1.5),
         fontWeight: 'normal',
-        color: Colors.blue,
-    },
-    productTitle: {
-        fontSize: totalSize(1.5),
-        fontWeight: 'bold',
-        color: Colors.blue,
-    },
-    productPrice: {
-        fontSize: totalSize(1.25),
-        color: Colors.steel,
-        textAlign: 'right'
+        color: Colors.blue
     },
     SelectedItem: {
         fontSize: totalSize(1.6),
         fontWeight: '600',
-        color: Colors.blue,
+        color: Colors.blue
     },
     categorySlideInactive: {
         height: totalSize(6),
@@ -208,8 +361,8 @@ const styles = StyleSheet.create({
     categorySlideActive: {
         height: totalSize(6),
         width: totalSize(6),
-        borderWidth: 2.5,
-        borderColor: Colors.blue,
+        borderWidth: 2,
+        borderColor: Colors.orange,
         borderRadius: 100,
         alignItems: 'center',
         justifyContent: 'center',
@@ -235,7 +388,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        height: totalSize(12),
+        height:totalSize(12),
     },
     backgroundImage: {
         width: Dimensions.get('window').width,
@@ -245,31 +398,114 @@ const styles = StyleSheet.create({
         shadowColor: Colors.black,
         shadowOpacity: 0.16,
         elevation: 5
-      },
-      profileIcon: {
+    },
+    profileIcon: {
         flexDirection: 'row',
         position: 'absolute',
         marginVertical: 60,
         left: 15
     },
-    wishlistIcon: {
-        flexDirection: 'row',
-        position: 'absolute',
-        marginVertical: 60,
-        right: 10
-    },
     treviIcon: {
         flexDirection: 'row',
         position: 'absolute',
-        top: 70,
-        left: 18
-
+        top: 75,
+        right: 18
     },
-    myGrantlistText: {
+    backIcon: {
+        position: 'absolute',
+        marginVertical: 70,
+        left: 10,
+      },
+      grantText: {
         fontSize: 34,
         color: 'white',
         fontWeight: 'bold',
         position: 'absolute',
-        top: 62,
-    }
-});
+        top: 65,
+    },
+    submitButton: {
+        shadowOffset: { width: 3, height: 6 },
+        shadowColor: Colors.black,
+        shadowOpacity: 0.16,
+        elevation: 5,
+        backgroundColor: Colors.orange,
+        paddingHorizontal: 30,
+        paddingVertical: 10,
+        borderRadius: 100
+    },
+    bottomBox: {
+        backgroundColor: 'white',
+        paddingVertical: height(2.5),
+        alignItems: 'center' ,
+        shadowOffset: { width: 3, height: 6 },
+        shadowColor: Colors.black,
+        shadowOpacity: 0.16,
+        elevation: 5
+    },
+    bottomBoxPosition: {
+        width: Dimensions.get('window').width,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
+    takePhotoButtonContainer: {
+        height:38,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width:150,
+        borderRadius:30,
+      },
+      takePhotoText: {
+        fontSize: 16,
+        color: '#585AD6',
+        fontWeight: 'bold'
+      },
+      selectPhotoButton: {
+        backgroundColor: "white",
+        shadowOffset: { width: 5, height: 5 },
+        shadowColor: 'black',
+        shadowOpacity: 0.25,
+        elevation: 5
+      },
+      selectPhotoButtonContainer: {
+        height:38,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width:150,
+        borderRadius:30,
+      },
+      selectPhotoText: {
+        fontSize: 16,
+        color: '#585AD6',
+        fontWeight: 'bold'
+      },
+      takePhotoButton: {
+        backgroundColor: "white",
+        shadowOffset: { width: 5, height: 5 },
+        shadowColor: 'black',
+        shadowOpacity: 0.25,
+        elevation: 5
+      },
+      photoButtonPosition: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginVertical: height(12)
+      },
+      pictureTextPosition: {
+        position: 'absolute',
+        top: 520,
+        left: 20
+      },
+      pictureText: {
+        color: '#585AD6',
+        fontSize: 16
+      },
+      pictureTextBold: {
+        color: '#585AD6',
+        fontSize: 20,
+        fontWeight: 'bold'
+      }
+})
+
