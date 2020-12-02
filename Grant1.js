@@ -39,12 +39,12 @@ const Grant1 = ({navigation}) => {
       <View style={styles.container}>
 
         <View>
-        <ImageBackground source={require('./src/Assets/Images/Grant1.jpg')} style={styles.backgroundImage}>
+        <ImageBackground source={require('../../../Assets/Images/Grant1.jpg')} style={styles.backgroundImage}>
         </ImageBackground>
         </View>
 
         <TouchableOpacity style={styles.treviIcon} onPress={() => navigation.navigate('Trending', {})}>
-          <Image source={require('./src/Assets/Images/littleTreviLogo.png')} />
+          <Image source={require('../../../Assets/Images/littleTreviLogo.png')} />
         </TouchableOpacity>
 
         <View style={styles.userInputs}>
@@ -76,11 +76,11 @@ const Grant1 = ({navigation}) => {
 
         </View>
 
-        
+
             <TouchableOpacity style={[styles.continueButtonContainer,  styles.continueButton]} onPress={() => navigation.navigate('Grant2', {title: title, description: description, price: price})}>
                 <Text style={[styles.continueText]}>Continue</Text>
             </TouchableOpacity>
-       
+
 
       </View>
 
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    
+
   },
   backgroundImage: {
     flex: 1,
@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 15,
     color: '#5D41BC',
-    
+
   },
   continueText: {
     fontSize: 25,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     top: -55,
     borderRadius: 20,
     justifyContent:"center",
-    padding:10 
+    padding:10
   },
   priceStyle: {
     width: 130,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     height: 35,
     borderRadius: 30,
     justifyContent:"center",
-    padding:10 
+    padding:10
   },
   priceInput: {
     position: 'absolute',
@@ -229,3 +229,4 @@ const styles = StyleSheet.create({
     left: 18
 },
 });
+
