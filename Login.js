@@ -18,6 +18,36 @@ import {
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
+const BottomBar = ({ children }) => (
+    <View style={styles.bottomBar}>
+        {children}
+    </View>
+)
+
+const Header = ({ children }) => (
+    <View style={styles.header}>
+        {children}
+    </View>
+)
+
+const HorizontalLine = ({ children }) => (
+    <View style={styles.horizontalLine}>
+    </View>
+)
+
+const Colors = {
+    primary: '#651a93',
+    secondary: '#4E45D6',
+    orange: '#f9c400',
+    whisper: '#f0edf4',
+    white: '#ffffff',
+    steel: '#cccccc',
+    black: '#000000',
+    gray: 'gray',
+    gray1: '#acb4be',
+    transparent: 'transparent'
+}
+
 const LoginScreen = ({navigation}) => {
 
     const [username, setUsername] = useState(null);
@@ -25,7 +55,7 @@ const LoginScreen = ({navigation}) => {
     const [message, setMessage] = useState('');
 
     const loginUser = async () => {
-        await fetch('http://192.168.0.8:8000/login-user/', {
+        await fetch('http://trevi-server.us-west-2.elasticbeanstalk.com/login-user/', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -52,7 +82,7 @@ const LoginScreen = ({navigation}) => {
                         await AsyncStorage.setItem(
                             'token',
                             json.response,
-                            () => {navigation.navigate('Grantlist')}
+                            () => {navigation.navigate('TrendingSimple')}
                         );
                     }
                     catch (error)
@@ -68,13 +98,22 @@ const LoginScreen = ({navigation}) => {
 
       <View style={styles.container}>
 
-        <View>
-            <ImageBackground source={require('../../../Assets/Images/loginScreen.jpg')} style={styles.backgroundImage}>
-
-            </ImageBackground>
+        <View style={styles.headerPosition}>
+            <Header>
+                <ImageBackground source={require('../../../Assets/Images/homeScreenHeader.png')} style={styles.headerBackground}>
+                    <View style={styles.headerElementsPositions}>
+                        <TouchableOpacity style={ styles.headerIconLeft} onPress={() => navigation.navigate('Splash')}>
+                            <IonIcon name={'chevron-back-outline'} size={35} color={'white'}  />
+                        </TouchableOpacity>
+                        <Text style={styles.headerText}>Welcome Back!</Text>
+                    </View>
+                </ImageBackground>
+            </Header>
         </View>
 
         <View style={styles.userInputs}>
+            <Text style={styles.backgroundText}>Username or Email</Text>
+
             <View style={styles.emailInput} >
             <TextInput
                 style={styles.inputText}
@@ -82,9 +121,11 @@ const LoginScreen = ({navigation}) => {
                 placeholderTextColor="#D3D3D3"
                 onChangeText={text => setUsername(text)}/>
             </View>
-        </View>
+        
+            <HorizontalLine />
+        <Text style={styles.backgroundText}>Password</Text>
 
-        <View style={styles.userInputs}>
+        
             <View style={styles.passwordInput} >
             <TextInput
                 style={styles.inputText}
@@ -92,36 +133,17 @@ const LoginScreen = ({navigation}) => {
                 placeholderTextColor="#D3D3D3"
                 onChangeText={text => setPassword(text)}/>
             </View>
+
+            <Text style={styles.message}>{message}</Text>
         </View>
 
-        <Text>{message}</Text>
 
-        <Button title='Submit' onPress={() => loginUser()}/>
-
-        <TouchableOpacity style={[styles.loginButtonContainer, styles.loginButton]}>
-          <Text style={styles.loginText}>Log In</Text>
-        </TouchableOpacity>
-
-        <View style={styles.forgotPasswordPosition}>
-          <TouchableOpacity >
-            <Text style={styles.forgotPasswordText}>
-                Forgot Password
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.rememberMePosition}>
-          <TouchableOpacity >
-            <Text style={styles.rememberMeText}>
-                Remember Me
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View styles={styles.headerIconLeft}>
-            <TouchableOpacity style={styles.backIcon} onPress={() => navigation.navigate('Splash')}>
-            <IonIcon name={'chevron-back-outline'} size={35} color={'white'}  />
-            </TouchableOpacity>
+        <View style={styles.bottomBarPosition}>
+            <BottomBar>
+                <TouchableOpacity style={[styles.loginButtonContainer, styles.loginButtonPosition]} onPress={() => loginUser()}>
+                    <Text style={styles.loginText}>Log In</Text>
+                </TouchableOpacity>
+            </BottomBar>
         </View>
 
       </View>
@@ -136,13 +158,51 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#EAE9F0'
 
   },
-  backgroundImage: {
+  header: {
     flex: 1,
+    //chnge the width back to .window
+    width: 434,
+    justifyContent: 'center'
+  },
+  headerPosition: {
+    position: "absolute",
+    top: 0,
+  },
+  headerBackground: { 
+    height: 90,
+    shadowOffset: { width: 3, height: 6 },
+    shadowColor: Colors.black,
+    shadowOpacity: 0.25,
+    elevation: 5,
+    justifyContent: 'center',
+  },
+  headerIconLeft: {
+    position: 'relative',
+    alignItems: 'flex-start',
+  },
+  headerText: {
+    color: 'white',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginHorizontal: '15%'
+    
+  },
+  headerElementsPositions: {
+    flexDirection: 'row',
+    marginHorizontal: 20,
+    marginTop: 25,
+  },
+  bottomBarPosition: {
+    position: "absolute",
+    bottom: 0,
+  },
+  bottomBar: {
+    backgroundColor: 'white',
     width: Dimensions.get('window').width,
-    height: Dimensions.get('window').height,
-    resizeMode: 'cover'
+    height: 90,
   },
   loginButton: {
     justifyContent: 'center',
@@ -164,31 +224,24 @@ const styles = StyleSheet.create({
       borderBottomColor: '#FFFFFF',
       flex:1,
   },
-  inputIcon:{
-    width:30,
-    height:30,
-    marginLeft:15,
-    justifyContent: 'center'
-  },
-  treviText: {
-
-  },
   loginButtonContainer: {
     height:48,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
     width:120,
     borderRadius:30,
-  },
-  loginButton: {
-    backgroundColor: '#EFC102',
-    position: 'absolute',
-    top: 818,
     shadowOffset: { width: 3, height: 6 },
     shadowColor: 'black',
     shadowOpacity: 0.25,
     elevation: 5
+  },
+  loginButtonPosition: {
+    backgroundColor: '#EFC102',
+    position: 'relative',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    marginVertical: 16,
+    marginHorizontal: '35%'
+
   },
   loginText: {
     fontSize: 25,
@@ -196,23 +249,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold'
   },
   emailInput:{
+    justifyContent: 'center',
     width: 375,
     backgroundColor:"white",
     //add shadow to the bottom
     height: 35,
-    top: -258,
     borderRadius: 30,
-    justifyContent:"center",
     padding:10
   },
   passwordInput: {
+    justifyContent: 'center',
     width: 375,
     backgroundColor:"white",
     //add shadow to the bottom
     height: 35,
-    top: -140,
     borderRadius: 30,
-    justifyContent:"center",
     padding:10
   },
   inputText:{
@@ -221,38 +272,24 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   userInputs: {
-    position: "absolute",
-
+    flex: 1,
+    justifyContent: 'space-around',
+    marginVertical: '30%',
+    marginLeft: '10%'
   },
-  forgotPasswordPosition: {
-    position: "absolute",
-    top: 350,
-    right: 20
-  },
-  forgotPasswordText: {
+  backgroundText: {
+    fontSize: 24,
     color: '#5D41BC',
-    fontSize: 18,
-
-},
-  rememberMePosition: {
-    position: "absolute",
-    top: 350,
-    left: 40
+    fontWeight: 'bold',
   },
-  rememberMeText: {
-    color: '#5D41BC',
-    fontSize: 18,
+  horizontalLine: {
+    width: Dimensions.get('window').width,
+    backgroundColor: 'white',
+    height: 2,
   },
-  headerIconLeft: {
-    position: 'absolute',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-},
-  backIcon: {
-    position: 'absolute',
-    marginVertical: -845,
-    left: -190
-}
+  message: {
+    marginVertical: '40%'
+  }
 
 });
+
